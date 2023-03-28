@@ -1,0 +1,2 @@
+python MoralAI.py
+pause
