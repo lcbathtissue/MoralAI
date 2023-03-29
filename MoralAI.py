@@ -23,16 +23,22 @@ if not test_simulation:
     agents = MoralAI_Util.populate_N_agents(GAME_CONFIG['num_agents'])  # create N number of agents based off configuration 
     MoralAI_Util.print_all_agents(agents)  # get the status of all initialized agents
     MoralAI_Util.populate_agent_targets(agents, GAME_CONFIG['num_targets_per_agent'])  # create NxM number of agents based off configuration 
+
+    print("\nTESTS")
+    agents[0].send_coordinates((1, 1), recipient='B')
+    agents[0].send_coordinates((2, 2))
+    agents[1].receive_coordinates(sender='A')
 else:
     grid = MoralAI_Util.init_grid()
+    print(grid)
 
-    # test_agent = MoralAI_Agent.Agent('T', 99, 99)
+    test_agent = MoralAI_Agent.Agent('T', 99, 99)
     # print(test_agent.agent_to_string())
 
-    agent_a = MoralAI_Agent.Agent('A', 0, 0)
-    print(agent_a.agent_to_string())
-    agent_b = MoralAI_Agent.Agent('B', 5, 5)
-    print(agent_b.agent_to_string())
+    # agent_a = MoralAI_Agent.Agent('A', 0, 0)
+    # print(agent_a.agent_to_string())
+    # agent_b = MoralAI_Agent.Agent('B', 5, 5)
+    # print(agent_b.agent_to_string())
 
     # # agent A sends coordinates to agent B through private channel
     # agent_a.send_coordinates((1, 1), recipient='B')

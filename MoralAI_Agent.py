@@ -6,6 +6,7 @@ class Agent:
         self.label = label
         self.public_channel = []
         self.private_channel = {}
+        self.received_coordinates = [] 
         self.power_level = 100
         self.x = x
         self.y = y
@@ -15,6 +16,7 @@ class Agent:
             print(f"New agent: {label}, {x}, {y}")
     
     def send_coordinates(self, coordinates, recipient=None):
+        print(f"send_coordinates: {coordinates} (recipient={recipient})")
         if recipient is None:
             self.public_channel.append(coordinates)
         else:
@@ -23,6 +25,7 @@ class Agent:
             self.private_channel[recipient].append(coordinates)
     
     def receive_coordinates(self, sender):
+        print(f"receive_coordinates: {self.receiver} sender={sender}")
         coordinates = []
         if sender is None:
             coordinates = self.public_channel
@@ -34,7 +37,7 @@ class Agent:
         # clear the private channel after receiving coordinates
         if sender in self.private_channel:
             self.private_channel[sender] = []
-        print(f"AGENT {self.label}'S COMMS\n{self.public_channel}\n{self.private_channel}")
+        print(f"AGENT {self.label}'S COMMS\n{coordinates}")
 
     def get_agent_label(self):
         return self.label
