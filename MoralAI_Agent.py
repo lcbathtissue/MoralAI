@@ -1,3 +1,4 @@
+import MoralAI_Util
 from MoralAI_Config import GAME_CONFIG
 
 class Agent:
@@ -6,21 +7,46 @@ class Agent:
         self.power_level = 100
         self.x = x
         self.y = y
-        self.radar_reach = 1
-        # print(f"New agent: {label}, {x}, {y}")
+        self.radar_reach = GAME_CONFIG['radar_reach']
+        MoralAI_Util.set_cell(x, y, label)
+        if GAME_CONFIG['verbose']:
+            print(f"New agent: {label}, {x}, {y}")
+
+    def get_agent_label(self):
+        return self.label
     
     def move_agent(self, direction):
+        valid_move = True
         if GAME_CONFIG['powered_moves']:
             if self.power_level == 0:
+                valid_move = False
+                print(f"AGENT {self.label} ATTEMPTED TO MOVE BUT IS OUT OF POWER!")
                 return
-        if direction == 'UP' and self.y > 0:
-            self.y -= 1
-        elif direction == 'DOWN' and self.y < 99:
-            self.y += 1
-        elif direction == 'LEFT' and self.x > 0:
-            self.x -= 1
-        elif direction == 'RIGHT' and self.x < 99:
-            self.x += 1
+        if direction == 'UP':
+            if self.y > 0:
+                self.y -= 1
+            else:
+                valid_move = False
+        elif direction == 'DOWN':
+            if self.y < GAME_CONFIG['grid_size']-1:
+                self.y += 1
+            else:
+                valid_move = False
+        elif direction == 'LEFT':
+            if self.x > 0:
+                self.x -= 1
+            else:
+                valid_move = False
+        elif direction == 'RIGHT':
+            if self.x < GAME_CONFIG['grid_size']-1:
+                self.x += 1
+            else:
+                valid_move = False
+        if valid_move and GAME_CONFIG['powered_moves']:
+            self.power_level -= 1
+        if not valid_move:
+            print(f"'AGENT {self.label}' ATTEMPTED AN INVALID MOVE IN DIRECTION '{direction}' FROM POS '{self.x}, {self.y}'!")
+
     
     def get_position(self):
         return self.x, self.y
@@ -35,7 +61,7 @@ class Agent:
         return nearby_cells
 
     def agent_to_string(self):
-        white_space = "    "
+        white_space = GAME_CONFIG['white_space']
         if GAME_CONFIG['powered_moves']:
             return f"Agent {self.label}:\n{white_space}Position ({self.x}, {self.y}),\n{white_space}Power level: {self.power_level}"
         else:
