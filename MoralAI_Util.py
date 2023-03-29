@@ -1,4 +1,13 @@
-import os, re, datetime
+import os, re, datetime, random, MoralAI_Agent
+
+def check_game_config_validity(GAME_CONFIG):
+    if GAME_CONFIG['num_agents'] > GAME_CONFIG['MAX_num_agents']:
+        print("Number of simulated agents is exceeding 'MAX_num_agents'\nEXITING..")
+        exit(1)
+
+    if GAME_CONFIG['num_agents'] <= 0:
+        print("Number of simulated agents is less than or equal to zero\nEXITING..")
+        exit(1)
 
 def init_game_file():
     if not os.path.exists('games'):
@@ -19,9 +28,6 @@ def init_grid():
     GRID_SIZE = 100  # 1 m = 100 cm (square grid)
     grid = [['_' for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
     return grid
-
-def set_cell(x, y, value):
-    grid[y-1][x-1] = value
 
 def grid_to_str(grid):
     result = ''
@@ -47,3 +53,33 @@ def grid_to_str(grid):
 def print_grid_to_game_file(grid, game_name):
     with open(game_name, 'a') as f:
         print(grid_to_str(grid), file=f)
+
+def set_cell(grid, x, y, value):
+    print(f"setting cell {x}, {y}, to {value}")
+    grid[y][x] = value
+    return grid
+
+def get_random_empty_cell(grid):
+    GRID_SIZE = len(grid)
+    while True:
+        x = random.randint(0, GRID_SIZE - 1)
+        y = random.randint(0, GRID_SIZE - 1)
+        if grid[x][y] == '_':
+            return (x, y)
+
+def populate_N_agents(grid, N_agents):
+    agents = []
+    for x in range(N_agents):
+        agent_dict = []
+        for i in range(26):
+            agent_dict.append(chr(ord('A') + i))
+        rnd_x, rnd_y = get_random_empty_cell(grid)
+        new_agent = MoralAI_Agent.Agent(agent_dict[x], rnd_x, rnd_y)
+        agents.append(new_agent)
+    return agents
+
+def print_all_agents(agents):
+    for x in agents:
+        print(x.agent_to_string())
+
+    

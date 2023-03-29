@@ -1,12 +1,13 @@
 from MoralAI_Config import GAME_CONFIG
 
 class Agent:
-    def __init__(self, label):
+    def __init__(self, label, x, y):
         self.label = label
         self.power_level = 100
-        self.x = 0
-        self.y = 0
+        self.x = x
+        self.y = y
         self.radar_reach = 1
+        # print(f"New agent: {label}, {x}, {y}")
     
     def move_agent(self, direction):
         if GAME_CONFIG['powered_moves']:
