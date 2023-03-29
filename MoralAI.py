@@ -13,7 +13,7 @@ GAME_CONFIG['num_targets_per_agent'] = 5  # M
 GAME_CONFIG['radar_reach'] = 1  # 3x3 grid ??
 GAME_CONFIG['powered_moves'] = False
 
-test_simulation = True
+test_simulation = False
 
 # INITIALIZATION
 grid = None  # create a global variable for the grid that will be accessible by all required functions using 'global grid'
@@ -24,15 +24,15 @@ if not test_simulation:
     MoralAI_Util.print_all_agents(agents)  # get the status of all initialized agents
     MoralAI_Util.populate_agent_targets(agents, GAME_CONFIG['num_targets_per_agent'])  # create NxM number of agents based off configuration 
 else:
-    # grid = MoralAI_Util.init_grid()
+    grid = MoralAI_Util.init_grid()
 
     # test_agent = MoralAI_Agent.Agent('T', 99, 99)
     # print(test_agent.agent_to_string())
 
-    # agent_a = MoralAI_Agent.Agent('A', 0, 0)
-    # print(agent_a.agent_to_string())
-    # agent_b = MoralAI_Agent.Agent('B', 5, 5)
-    # print(agent_b.agent_to_string())
+    agent_a = MoralAI_Agent.Agent('A', 0, 0)
+    print(agent_a.agent_to_string())
+    agent_b = MoralAI_Agent.Agent('B', 5, 5)
+    print(agent_b.agent_to_string())
 
     # # agent A sends coordinates to agent B through private channel
     # agent_a.send_coordinates((1, 1), recipient='B')
@@ -49,9 +49,9 @@ else:
     # # agent B receives coordinates from agent A's public channel
     # agent_b.receive_coordinates(sender=None)
 
-    MoralAI_Util.save_csv_file(None, f"{game_name}.csv")
+
 
 # MoralAI_Util.print_grid_to_game_file(grid, game_name)
 # print(MoralAI_Util.grid_to_str())
 # MoralAI_Util.save_csv_file(None, f"{game_name}.csv")
-
+# MoralAI_Util.generate_summary_csv("example_test_csv.csv", "test_csv_summary.csv")
