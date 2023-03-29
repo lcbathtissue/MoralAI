@@ -1,12 +1,50 @@
 import MoralAI_Util
 from MoralAI_Config import GAME_CONFIG
 
+class Observer:
+    # Observer object
+    def receive_public_msg(self, coordinates):
+        pass
+
+    def receive_private_msg(self, sender, coordinates):
+        pass
+
+class PublicChannel:
+    # Subject object
+    def __init__(self):
+        self.observers = []
+        self.coordinates_list = []
+
+    def subscribe_agent(self, observer):
+        self.observers.append(observer)
+
+    def send_all(self, coordinates):
+        coordinates = [list(map(int, c.split(','))) for c in coordinates]
+        self.coordinates_list.extend(coordinates)
+        for observer in self.observers:
+            observer.receive_public_msg(coordinates)
+
+class PrivateChannel:
+    # Subject object
+    def __init__(self):
+        self.observers = {}
+    
+    def subscribe_agent(self, agent):
+        self.observers[agent.label] = agent
+
+    def send_private_msg(self, sender, recipient, coordinates):
+        coordinates = [list(map(int, c.split(','))) for c in coordinates]
+        if recipient in self.observers:
+            self.observers[recipient].receive_private_msg(sender, coordinates)
+
+public_channel = PublicChannel()
+private_channel = PrivateChannel()
 class Agent:
     def __init__(self, label, x, y):
         self.label = label
-        self.public_channel = []
-        self.private_channel = {}
-        self.received_coordinates = [] 
+        self.coordinates_list = []
+        public_channel.subscribe_agent(self)
+        private_channel.subscribe_agent(self)
         self.power_level = 100
         self.x = x
         self.y = y
@@ -14,30 +52,6 @@ class Agent:
         MoralAI_Util.set_cell(x, y, label)
         if GAME_CONFIG['verbose']:
             print(f"New agent: {label}, {x}, {y}")
-    
-    def send_coordinates(self, coordinates, recipient=None):
-        print(f"send_coordinates: {coordinates} (recipient={recipient})")
-        if recipient is None:
-            self.public_channel.append(coordinates)
-        else:
-            if recipient not in self.private_channel:
-                self.private_channel[recipient] = []
-            self.private_channel[recipient].append(coordinates)
-    
-    def receive_coordinates(self, sender):
-        print(f"receive_coordinates: {self.receiver} sender={sender}")
-        coordinates = []
-        if sender is None:
-            coordinates = self.public_channel
-        else:
-            if sender in self.private_channel:
-                coordinates = self.private_channel[sender]
-        # add received coordinates to own list of received coordinates
-        self.received_coordinates.extend(coordinates)
-        # clear the private channel after receiving coordinates
-        if sender in self.private_channel:
-            self.private_channel[sender] = []
-        print(f"AGENT {self.label}'S COMMS\n{coordinates}")
 
     def get_agent_label(self):
         return self.label
@@ -93,3 +107,29 @@ class Agent:
             return f"Agent {self.label}:\n{white_space}Position ({self.x}, {self.y}),\n{white_space}Power level: {self.power_level}"
         else:
             return f"Agent {self.label}:\n{white_space}Position ({self.x}, {self.y})"
+
+    def send_public_msg(self, coordinates):
+        print(f"PUBLIC-MSG: Agent {self.label} is sending {coordinates}")
+        public_channel.send_all(coordinates)
+
+    def send_private_msg(self, recipient, coordinates):
+        print(f"PRIVATE-MSG: Agent {self.label} is sending {coordinates} to Agent {recipient}")
+        private_channel.send_private_msg(self.label, recipient, coordinates)
+
+    def receive_public_msg(self, coordinates):
+        self.coordinates_list.extend(coordinates)
+        self.remove_duplicate_coordinates()
+
+    def receive_private_msg(self, sender, coordinates):
+        self.coordinates_list.extend(coordinates)
+        self.remove_duplicate_coordinates()
+
+    def get_shared_coords(self):
+        return f"{self.label}: {self.coordinates_list}"
+
+    def remove_duplicate_coordinates(self):
+        coordinates_without_duplicates = []
+        for coordinates in self.coordinates_list:
+            if coordinates not in coordinates_without_duplicates:
+                coordinates_without_duplicates.append(coordinates)
+        self.coordinates_list = coordinates_without_duplicates

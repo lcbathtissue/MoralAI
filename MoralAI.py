@@ -25,9 +25,13 @@ if not test_simulation:
     MoralAI_Util.populate_agent_targets(agents, GAME_CONFIG['num_targets_per_agent'])  # create NxM number of agents based off configuration 
 
     print("\nTESTS")
-    agents[0].send_coordinates((1, 1), recipient='B')
-    agents[0].send_coordinates((2, 2))
-    agents[1].receive_coordinates(sender='A')
+    agents[0].send_public_msg(["1, 2"])
+    agents[1].send_public_msg(["3, 4"])
+    agents[0].send_private_msg('B', ['5, 6'])
+    agents[1].send_private_msg('C', ['7, 8'])
+
+    for agent in agents:
+        print(agent.get_shared_coords())
 else:
     grid = MoralAI_Util.init_grid()
     print(grid)
