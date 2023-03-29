@@ -119,16 +119,25 @@ class Agent:
         public_channel.send_all(coordinates)
 
     def send_private_msg(self, recipient, coordinates):
-        print(f"PRIVATE-MSG: Agent {self.label} is sending {coordinates} to Agent {recipient}")
-        private_channel.send_private_msg(self.label, recipient, coordinates)
+        private_comms_enabled = MoralAI_Util.get_private_comms_state()
+        if private_comms_enabled:
+            print(f"PRIVATE-MSG: Agent {self.label} is sending {coordinates} to Agent {recipient}")
+            private_channel.send_private_msg(self.label, recipient, coordinates)
+        else:
+            print(f"BLOCKED: Agent {self.label} attempted to send on the private channel but because of game rules it was blocked.")
 
     def receive_public_msg(self, coordinates):
         self.coordinates_list.extend(coordinates)
         self.remove_duplicate_coordinates()
 
     def receive_private_msg(self, sender, coordinates):
-        self.coordinates_list.extend(coordinates)
-        self.remove_duplicate_coordinates()
+        private_comms_enabled = MoralAI_Util.get_private_comms_state()
+        if private_comms_enabled:
+            self.coordinates_list.extend(coordinates)
+            self.remove_duplicate_coordinates()
+        else:
+            print(f"BLOCKED: Agent {self.label} attempted to send on the private channel but because of game rules it was blocked.")
+
 
     def get_shared_coords(self):
         return f"{self.label}: {self.coordinates_list}"

@@ -119,9 +119,10 @@ def check_game_end_conditions(GAME_CONFIG, agents):
     if GAME_CONFIG['scenario_number'] == 1 or GAME_CONFIG['scenario_number'] == 3:
         print(f"{white_space}game ends when ANY agent has captured {num_targets} targets..")
         captures = get_agents_target_captures(agents, num_targets)
-        for capture in captures:
+        for i, capture in enumerate(captures):
             if capture == num_targets:
                 end_game_flag = True
+                winner = agents[i].get_agent_label()
     elif GAME_CONFIG['scenario_number'] == 2:
         print(f"{white_space}game ends when ALL {num_agents} agents have captured all {(num_agents*num_targets)} targets ({num_targets} per agent)..")
         captures = get_agents_target_captures(agents, num_targets)
@@ -133,9 +134,10 @@ def check_game_end_conditions(GAME_CONFIG, agents):
                 agents_completed.append(False)
         if all(agents_completed):
             end_game_flag = True
+            winner = None
 
     if end_game_flag:
-        end_game()
+        end_game(winner)
 
 def get_agents_target_captures(agents, num_targets):
     target_captures = []
@@ -144,8 +146,11 @@ def get_agents_target_captures(agents, num_targets):
         target_captures.append(collected_count)
     return target_captures
 
-def end_game():
-    print("\nThe game has ended!\nEXITING..")
+def end_game(winner):
+    if winner is not None:
+        print(f"\nThe game has ended! The winner is Agent {winner}\nEXITING..")
+    else:
+        print("\nThe game has ended! All agents collected their targets!\nEXITING..")
     exit(0)
 
 def init_game_file():
@@ -216,7 +221,7 @@ def get_random_empty_cell(grid):
             return (x, y)
 
 def populate_N_agents(N_agents):
-    global grid
+    global grid, show_initial_positions
     grid = init_grid()
     agents = []
     for x in range(N_agents):
@@ -228,16 +233,18 @@ def populate_N_agents(N_agents):
         agents.append(new_agent)
     return agents
 
-def populate_agent_targets(agents, num_targets_per_agent):
+def populate_agent_targets(agents, num_targets_per_agent, show_initial_positions):
     global grid
     white_space = GAME_CONFIG['white_space']
     
     for agent_num, agent in enumerate(agents):
-        print(f"\nAgent {agent.get_agent_label()} Target's:")
+        if show_initial_positions:
+            print(f"\nAgent {agent.get_agent_label()} Target's:")
         for i in range(num_targets_per_agent):
             target_name = f"T{agent.get_agent_label()}{i+1}"
             rnd_x, rnd_y = get_random_empty_cell(grid)
-            print(f"{white_space}'{target_name}' Position ({rnd_x}, {rnd_y})")
+            if show_initial_positions:
+                print(f"{white_space}'{target_name}' Position ({rnd_x}, {rnd_y})")
             set_cell(rnd_x, rnd_y, target_name)
 
 def print_all_agents(agents):
@@ -257,4 +264,19 @@ def show_moves(grids_list):
         os.system('cls' if os.name == 'nt' else 'clear')
         for row in array:
             print(" ".join(str(elem) for elem in row))
-    
+
+def enable_private_comms_if_allowed(GAME_CONFIG):
+    global private_comms_enabled
+    if GAME_CONFIG['scenario_number'] == 1:
+        print("Blocking private communication channels..")
+        private_comms_enabled = False
+    else:
+        print("Enabling private communication channels..")
+        private_comms_enabled = True
+
+def get_private_comms_state():
+    global private_comms_enabled
+    if GAME_CONFIG['scenario_number'] == 1:
+        return False
+    else:
+        return True

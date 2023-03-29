@@ -13,22 +13,28 @@ GAME_CONFIG['num_targets_per_agent'] = 5  # M
 GAME_CONFIG['radar_reach'] = 1  # 3x3 grid ??
 GAME_CONFIG['powered_moves'] = False
 
+GAME_CONFIG['show_initial_positions'] = False
+
 test_simulation = False
 
 # INITIALIZATION
+private_comms_enabled = None
+show_initial_positions = GAME_CONFIG['show_initial_positions']
+MoralAI_Util.enable_private_comms_if_allowed(GAME_CONFIG)
 grid = None  # create a global variable for the grid that will be accessible by all required functions using 'global grid'
 game_name = MoralAI_Util.init_game_file()  # create a unique name & file for the simulation
 MoralAI_Util.check_game_config_validity(GAME_CONFIG)  # check validity of configuration, stop program if required
 if not test_simulation:
     agents = MoralAI_Util.populate_N_agents(GAME_CONFIG['num_agents'])  # create N number of agents based off configuration 
-    MoralAI_Util.print_all_agents(agents)  # get the status of all initialized agents
-    MoralAI_Util.populate_agent_targets(agents, GAME_CONFIG['num_targets_per_agent'])  # create NxM number of agents based off configuration 
+    if show_initial_positions:
+        MoralAI_Util.print_all_agents(agents)  # get the status of all initialized agents
+    MoralAI_Util.populate_agent_targets(agents, GAME_CONFIG['num_targets_per_agent'], show_initial_positions)  # create NxM number of agents based off configuration 
 
     # print("\nMESSAGING TEST")
-    # agents[0].send_public_msg(["1, 2"])
-    # agents[1].send_public_msg(["3, 4"])
-    # agents[0].send_private_msg('B', ['5, 6'])
-    # agents[1].send_private_msg('C', ['7, 8'])
+    agents[0].send_public_msg(["1, 2"])
+    agents[1].send_public_msg(["3, 4"])
+    agents[0].send_private_msg('B', ['5, 6'])
+    agents[1].send_private_msg('C', ['7, 8'])
 
     # for agent in agents:
     #     print(agent.get_shared_coords())
