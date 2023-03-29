@@ -5,6 +5,7 @@ from MoralAI_Config import GAME_CONFIG
 # CONFIGURATION
 GAME_CONFIG['verbose'] = False  # toggles extra print statements to see simulations internal state
 GAME_CONFIG['white_space'] = "    "  # sets the indentation for print statements with 'tabs'
+GAME_CONFIG['scenario_number'] = 1  # 1= 'Competition', 2= 'Collaboration', 3= 'Compassionate'
 GAME_CONFIG['grid_size'] = 100  # 1 m = 100 cm (square grid)
 GAME_CONFIG['num_agents'] = 5  # N
 GAME_CONFIG['MAX_num_agents'] = 5  # MAX N
@@ -23,31 +24,34 @@ if not test_simulation:
     MoralAI_Util.print_all_agents(agents)  # get the status of all initialized agents
     MoralAI_Util.populate_agent_targets(agents, GAME_CONFIG['num_targets_per_agent'])  # create NxM number of agents based off configuration 
 else:
-    grid = MoralAI_Util.init_grid()
+    # grid = MoralAI_Util.init_grid()
 
     # test_agent = MoralAI_Agent.Agent('T', 99, 99)
     # print(test_agent.agent_to_string())
 
-    agent_a = MoralAI_Agent.Agent('A', 0, 0)
-    print(agent_a.agent_to_string())
-    agent_b = MoralAI_Agent.Agent('B', 5, 5)
-    print(agent_b.agent_to_string())
+    # agent_a = MoralAI_Agent.Agent('A', 0, 0)
+    # print(agent_a.agent_to_string())
+    # agent_b = MoralAI_Agent.Agent('B', 5, 5)
+    # print(agent_b.agent_to_string())
 
-    # agent A sends coordinates to agent B through private channel
-    agent_a.send_coordinates((1, 1), recipient='B')
+    # # agent A sends coordinates to agent B through private channel
+    # agent_a.send_coordinates((1, 1), recipient='B')
 
-    # agent A sends coordinates to all agents through public channel
-    agent_a.send_coordinates((2, 2))
+    # # agent A sends coordinates to all agents through public channel
+    # agent_a.send_coordinates((2, 2))
 
-    # agent B sends coordinates to agent A through private channel
-    agent_b.send_coordinates((6, 6), recipient='A')
+    # # agent B sends coordinates to agent A through private channel
+    # agent_b.send_coordinates((6, 6), recipient='A')
 
-    # agent A receives coordinates from agent B's private channel
-    agent_a.receive_coordinates(sender='B')
+    # # agent A receives coordinates from agent B's private channel
+    # agent_a.receive_coordinates(sender='B')
 
-    # agent B receives coordinates from agent A's public channel
-    agent_b.receive_coordinates(sender=None)
+    # # agent B receives coordinates from agent A's public channel
+    # agent_b.receive_coordinates(sender=None)
+
+    MoralAI_Util.save_csv_file(None, f"{game_name}.csv")
 
 # MoralAI_Util.print_grid_to_game_file(grid, game_name)
 # print(MoralAI_Util.grid_to_str())
+# MoralAI_Util.save_csv_file(None, f"{game_name}.csv")
 

@@ -2,6 +2,7 @@
 # , INSTEAD DEFINE THEM INSIDE MORALAI.PY
 
 GAME_CONFIG = {
+    'scenario_number': None,
     'white_space': None,
     'grid_size': None,
     'powered_moves': None,

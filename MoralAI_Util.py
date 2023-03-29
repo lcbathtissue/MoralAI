@@ -1,5 +1,73 @@
-import os, re, datetime, random, MoralAI_Agent
+import os, re, csv, datetime, random, MoralAI_Agent
 from MoralAI_Config import GAME_CONFIG
+
+def save_csv_file(data, filename):
+    data = [
+        {
+            'Scenario number (1,2 or 3)': 1, 
+            'Iteration number': 1, 
+            'Agent number': 1, 
+            'd: Number of collected targets by the agent': 10, 
+            'e: Number of steps taken by the agent at the end of iteration': 20
+        },
+        {
+            'Scenario number (1,2 or 3)': 1, 
+            'Iteration number': 1, 
+            'Agent number': 1, 
+            'd: Number of collected targets by the agent': 10, 
+            'e: Number of steps taken by the agent at the end of iteration': 20
+        },
+    ]
+    
+    with open(filename, mode='w', newline='') as csv_file:
+        fieldnames = [
+            'Scenario number (1,2 or 3)', 
+            'Iteration number', 
+            'Agent number', 
+            'd: Number of collected targets by the agent', 
+            'e: Number of steps taken by the agent at the end of iteration', 
+            'f: Agent happiness: f=d/(e+1)', 
+            'g: Maximum happiness in each iteration', 
+            'h: Minimum happiness in each iteration', 
+            'Average happiness in each iteration', 
+            'Standard deviation of happiness in each iteration', 
+            'k: Agent competitiveness: k=(f-h)/(g-h)'
+        ]
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+        
+        for row in data:
+            row['f: Agent happiness: f=d/(e+1)'] = row['d: Number of collected targets by the agent'] / (row['e: Number of steps taken by the agent at the end of iteration'] + 1)  # Calculate happiness
+            writer.writerow(row)
+        
+        iter_data = {} 
+        for row in data:
+            iter_num = row['Iteration number']
+            if iter_num not in iter_data:
+                iter_data[iter_num] = []
+            iter_data[iter_num].append(row['f: Agent happiness: f=d/(e+1)'])
+        
+        for iter_num in sorted(iter_data.keys()):
+            happiness_values = iter_data[iter_num]
+            max_happiness = max(happiness_values)
+            min_happiness = min(happiness_values)
+            avg_happiness = sum(happiness_values) / len(happiness_values)
+            std_dev_happiness = (sum((x - avg_happiness) ** 2 for x in happiness_values) / len(happiness_values)) ** 0.5
+            
+            # Write happiness statistics row for current iteration
+            writer.writerow({
+                'Scenario number (1,2 or 3)': '',
+                'Iteration number': iter_num,
+                'Agent number': '',
+                'd: Number of collected targets by the agent': '',
+                'e: Number of steps taken by the agent at the end of iteration': '',
+                'f: Agent happiness: f=d/(e+1)': max_happiness,
+                'g: Maximum happiness in each iteration': '',
+                'h: Minimum happiness in each iteration': min_happiness,
+                'Average happiness in each iteration': avg_happiness,
+                'Standard deviation of happiness in each iteration': std_dev_happiness,
+                'k: Agent competitiveness: k=(f-h)/(g-h)': '',
+            })
 
 def check_game_config_validity(GAME_CONFIG):
     if GAME_CONFIG['num_agents'] > GAME_CONFIG['MAX_num_agents']:
@@ -13,17 +81,17 @@ def check_game_config_validity(GAME_CONFIG):
 def init_game_file():
     if not os.path.exists('games'):
         os.makedirs('games')
-    game_name = f"games/game_{datetime.datetime.now().strftime('%m-%d_%H-%M')}.txt"
-    while os.path.exists(game_name):
-        suffix_match = re.search(r"_(\d+)\.", game_name)
+    game_name = f"games/game_{datetime.datetime.now().strftime('%m-%d_%H-%M')}"
+    while os.path.exists(f"{game_name}.txt"):
+        suffix_match = re.search(r"_(\d+)\.", f"{game_name}.txt")
         if suffix_match:
             suffix = int(suffix_match.group(1)) + 1
-            game_name = re.sub(r"_(\d+)\.", f"_{suffix}.", game_name)
+            game_name = re.sub(r"_(\d+)\.", f"_{suffix}.", f"{game_name}.txt")
         else:
-            game_name = re.sub(r"\.", "_2.", game_name)
-    with open(game_name, 'w'):
+            game_name = re.sub(r"\.", "_2.", f"{game_name}.txt")
+    with open(f"{game_name}.txt", 'w'):
         pass
-    print(f"{game_name}\n")
+    print(f"{game_name}.txt\n")
     return game_name
 
 def init_grid():
@@ -106,4 +174,17 @@ def print_all_agents(agents):
     for x in agents:
         print(x.agent_to_string())
 
+def show_moves(grids_list):
+    grids_list = [
+        [[1, 2, 2], [3, 4, 2], [3, 4, 2]], 
+        [[5, 6, 2], [7, 8, 2], [3, 4, 2]], 
+        [[9, 10, 2], [11, 12, 2], [3, 4, 2]]
+    ]
+
+    for i, array in enumerate(grids_list):
+        if i > 0:
+            input("\nPress Enter to continue...")
+        os.system('cls' if os.name == 'nt' else 'clear')
+        for row in array:
+            print(" ".join(str(elem) for elem in row))
     
