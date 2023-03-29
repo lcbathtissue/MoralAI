@@ -2,7 +2,6 @@ import MoralAI_Util
 from MoralAI_Config import GAME_CONFIG
 
 class Observer:
-    # Observer object
     def receive_public_msg(self, coordinates):
         pass
 
@@ -10,7 +9,7 @@ class Observer:
         pass
 
 class PublicChannel:
-    # Subject object
+    # [public] 'Subject' object
     def __init__(self):
         self.observers = []
         self.coordinates_list = []
@@ -25,7 +24,7 @@ class PublicChannel:
             observer.receive_public_msg(coordinates)
 
 class PrivateChannel:
-    # Subject object
+    # [private] 'Subject' object
     def __init__(self):
         self.observers = {}
     
@@ -42,6 +41,7 @@ private_channel = PrivateChannel()
 class Agent:
     def __init__(self, label, x, y):
         self.label = label
+        self.collected_targets = 0
         self.coordinates_list = []
         public_channel.subscribe_agent(self)
         private_channel.subscribe_agent(self)
@@ -55,6 +55,12 @@ class Agent:
 
     def get_agent_label(self):
         return self.label
+
+    def get_agent_collected_targets(self):
+        return self.collected_targets
+
+    def add_agent_collected_target_count(self):
+        self.collected_targets += 1
     
     def move_agent(self, direction):
         valid_move = True

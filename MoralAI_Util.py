@@ -107,6 +107,47 @@ def check_game_config_validity(GAME_CONFIG):
         print("Number of simulated agents is less than or equal to zero\nEXITING..")
         exit(1)
 
+def check_game_end_conditions(GAME_CONFIG, agents):
+    end_game_flag = False
+    game_modes = ["Competition", "Collaboration", "Compassion"]
+    white_space = GAME_CONFIG['white_space']
+    num_agents = GAME_CONFIG['num_agents']
+    num_targets = GAME_CONFIG['num_targets_per_agent']
+    game_mode_num = GAME_CONFIG['scenario_number']
+    game_mode = game_modes[game_mode_num-1]
+    print(f"[GAME-END-CHECK: game_mode={game_mode}] There are {num_targets} targets per agent..")
+    if GAME_CONFIG['scenario_number'] == 1 or GAME_CONFIG['scenario_number'] == 3:
+        print(f"{white_space}game ends when ANY agent has captured {num_targets} targets..")
+        captures = get_agents_target_captures(agents, num_targets)
+        for capture in captures:
+            if capture == num_targets:
+                end_game_flag = True
+    elif GAME_CONFIG['scenario_number'] == 2:
+        print(f"{white_space}game ends when ALL {num_agents} agents have captured all {(num_agents*num_targets)} targets ({num_targets} per agent)..")
+        captures = get_agents_target_captures(agents, num_targets)
+        agents_completed = []
+        for capture in captures:
+            if capture == num_targets:
+                agents_completed.append(True)
+            else:
+                agents_completed.append(False)
+        if all(agents_completed):
+            end_game_flag = True
+
+    if end_game_flag:
+        end_game()
+
+def get_agents_target_captures(agents, num_targets):
+    target_captures = []
+    for agent in agents:
+        collected_count = agent.get_agent_collected_targets()
+        target_captures.append(collected_count)
+    return target_captures
+
+def end_game():
+    print("\nThe game has ended!\nEXITING..")
+    exit(0)
+
 def init_game_file():
     if not os.path.exists('games'):
         os.makedirs('games')

@@ -5,7 +5,7 @@ from MoralAI_Config import GAME_CONFIG
 # CONFIGURATION
 GAME_CONFIG['verbose'] = False  # toggles extra print statements to see simulations internal state
 GAME_CONFIG['white_space'] = "    "  # sets the indentation for print statements with 'tabs'
-GAME_CONFIG['scenario_number'] = 1  # 1= 'Competition', 2= 'Collaboration', 3= 'Compassionate'
+GAME_CONFIG['scenario_number'] = 2  # 1= 'Competition', 2= 'Collaboration', 3= 'Compassionate'
 GAME_CONFIG['grid_size'] = 100  # 1 m = 100 cm (square grid)
 GAME_CONFIG['num_agents'] = 5  # N
 GAME_CONFIG['MAX_num_agents'] = 5  # MAX N
@@ -24,14 +24,14 @@ if not test_simulation:
     MoralAI_Util.print_all_agents(agents)  # get the status of all initialized agents
     MoralAI_Util.populate_agent_targets(agents, GAME_CONFIG['num_targets_per_agent'])  # create NxM number of agents based off configuration 
 
-    print("\nTESTS")
-    agents[0].send_public_msg(["1, 2"])
-    agents[1].send_public_msg(["3, 4"])
-    agents[0].send_private_msg('B', ['5, 6'])
-    agents[1].send_private_msg('C', ['7, 8'])
+    # print("\nMESSAGING TEST")
+    # agents[0].send_public_msg(["1, 2"])
+    # agents[1].send_public_msg(["3, 4"])
+    # agents[0].send_private_msg('B', ['5, 6'])
+    # agents[1].send_private_msg('C', ['7, 8'])
 
-    for agent in agents:
-        print(agent.get_shared_coords())
+    # for agent in agents:
+    #     print(agent.get_shared_coords())
 else:
     grid = MoralAI_Util.init_grid()
     print(grid)
