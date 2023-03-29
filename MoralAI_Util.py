@@ -31,6 +31,12 @@ def init_grid():
     grid = [['_' for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
     return grid
 
+def return_target_num(string):
+    for char in string:
+        num_str = ''.join(filter(str.isdigit, char))
+        if num_str:
+            return int(num_str)
+
 def grid_to_str():
     global grid
     result = ''
@@ -93,8 +99,8 @@ def populate_agent_targets(agents, num_targets_per_agent):
         for i in range(num_targets_per_agent):
             target_name = f"T{agent.get_agent_label()}{i+1}"
             rnd_x, rnd_y = get_random_empty_cell(grid)
-            print(f"{white_space}Setting target={target_name} at {rnd_x} {rnd_y}")
-            set_cell(rnd_x, rnd_y, target_name) # replace (0,0) with the desired target location
+            print(f"{white_space}'{target_name}' Position ({rnd_x}, {rnd_y})")
+            set_cell(rnd_x, rnd_y, target_name)
 
 def print_all_agents(agents):
     for x in agents:
