@@ -4,6 +4,8 @@ from MoralAI_Config import GAME_CONFIG
 class Agent:
     def __init__(self, label, x, y):
         self.label = label
+        self.public_channel = []
+        self.private_channel = {}
         self.power_level = 100
         self.x = x
         self.y = y
@@ -11,6 +13,28 @@ class Agent:
         MoralAI_Util.set_cell(x, y, label)
         if GAME_CONFIG['verbose']:
             print(f"New agent: {label}, {x}, {y}")
+    
+    def send_coordinates(self, coordinates, recipient=None):
+        if recipient is None:
+            self.public_channel.append(coordinates)
+        else:
+            if recipient not in self.private_channel:
+                self.private_channel[recipient] = []
+            self.private_channel[recipient].append(coordinates)
+    
+    def receive_coordinates(self, sender):
+        coordinates = []
+        if sender is None:
+            coordinates = self.public_channel
+        else:
+            if sender in self.private_channel:
+                coordinates = self.private_channel[sender]
+        # add received coordinates to own list of received coordinates
+        self.received_coordinates.extend(coordinates)
+        # clear the private channel after receiving coordinates
+        if sender in self.private_channel:
+            self.private_channel[sender] = []
+        print(f"AGENT {self.label}'S COMMS\n{self.public_channel}\n{self.private_channel}")
 
     def get_agent_label(self):
         return self.label
