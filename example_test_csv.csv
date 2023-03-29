@@ -1,4 +1,4 @@
 "Scenario number (1,2 or 3)",Iteration number,Agent number,d: Number of collected targets by the agent,e: Number of steps taken by the agent at the end of iteration,f: Agent happiness: f=d/(e+1),g: Maximum happiness in each iteration,h: Minimum happiness in each iteration,Average happiness in each iteration,Standard deviation of happiness in each iteration,k: Agent competitiveness: k=(f-h)/(g-h)
-1,1,1,10,20,0.476190476,,,,,
-1,1,1,10,20,0.476190476,,,,,
-,1,,,,0.476190476,,0.476190476,0.476190476,0,
+1,1,1,10,20,0.476190476,0,0,0,0,0
+1,1,1,10,20,0.476190476,0,0,0,0,0
+0,1,0,0,0,0.476190476,0,0.476190476,0.476190476,0,0
