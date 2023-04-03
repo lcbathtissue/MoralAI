@@ -9,11 +9,11 @@ GAME_CONFIG['scenario_number'] = 2  # 1= 'Competition', 2= 'Collaboration', 3= '
 GAME_CONFIG['grid_size'] = 100  # 1 m = 100 cm (square grid)
 GAME_CONFIG['num_agents'] = 5  # N
 GAME_CONFIG['MAX_num_agents'] = 5  # MAX N
-GAME_CONFIG['num_targets_per_agent'] = 5  # M
+GAME_CONFIG['num_targets_per_agent'] = 1  # M
 GAME_CONFIG['radar_reach'] = 1  # 3x3 grid ??
 GAME_CONFIG['powered_moves'] = False
 
-GAME_CONFIG['show_initial_positions'] = False
+GAME_CONFIG['show_initial_positions'] = True
 
 test_simulation = False
 
@@ -35,6 +35,7 @@ if not test_simulation:
     agents[1].send_public_msg(["3, 4"])
     agents[0].send_private_msg('B', ['5, 6'])
     agents[1].send_private_msg('C', ['7, 8'])
+    print(MoralAI_Util.grid_to_str())
 
     # for agent in agents:
     #     print(agent.get_shared_coords())
