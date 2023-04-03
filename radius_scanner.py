@@ -1,7 +1,6 @@
 import math, random
 
 def observation_matrix(grid, radius, center_x, center_y):
-
     # define the observable space around the agent, 
     # 'X' out of range, 'A' is agent at centre, '0' is reachable cell in radius 
     center = radius  
