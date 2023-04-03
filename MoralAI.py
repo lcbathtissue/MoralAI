@@ -36,20 +36,32 @@ if show_initial_positions:
 MoralAI_Util.populate_agent_targets(agents, GAME_CONFIG['num_targets_per_agent'], show_initial_positions)  # create NxM number of agents based off configuration 
 
 # TESTS
-# print("\nMESSAGING TEST")
-# agents[0].send_public_msg(["1, 2"])
-# agents[1].send_public_msg(["3, 4"])
-# agents[0].send_private_msg('B', ['5, 6'])
-# agents[1].send_private_msg('C', ['7, 8'])
-print(MoralAI_Util.grid_to_str())
+# print(MoralAI_Util.grid_to_str())
 
-print("\nSCANNER TEST")
-test_scanner = agents[0].observation_matrix(grid)
-for row in test_scanner:
-    print(row)
+# print("\nCOORD MESSAGING TEST")
+# agents[0].send_public_coords(["1, 2"])
+# agents[1].send_public_coords(["3, 4"])
+# agents[0].send_private_coords('B', ['5, 6'])
+# agents[1].send_private_coords('C', ['7, 8'])
 
 # for agent in agents:
 #     print(agent.get_shared_coords())
+
+# print("\nSTRING MESSAGING TEST")
+agents[0].send_public_msg("hello everyone")
+agents[1].send_public_msg("hello!")
+agents[0].send_private_msg('B', "B i am sending you a messsage")
+agents[1].send_private_msg('C', "C lets team up on A")
+
+for agent in agents:
+    print(agent.get_agent_chatlog())
+
+# print("\nSCANNER TEST")
+# test_scanner = agents[0].observation_matrix(grid)
+# for row in test_scanner:
+#     print(row)
+
+
 
 # MoralAI_Util.print_grid_to_game_file(grid, game_name)
 # print(MoralAI_Util.grid_to_str())

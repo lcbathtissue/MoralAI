@@ -2,10 +2,16 @@ import math, MoralAI_Util
 from MoralAI_Config import GAME_CONFIG
 
 class Observer:
-    def receive_public_msg(self, coordinates):
+    def receive_public_msg(self, message):
         pass
 
-    def receive_private_msg(self, sender, coordinates):
+    def receive_private_msg(self, sender, message):
+        pass
+
+    def receive_public_coords(self, coordinates):
+        pass
+
+    def receive_private_coords(self, sender, coordinates):
         pass
 
 class PublicChannel:
@@ -13,15 +19,21 @@ class PublicChannel:
     def __init__(self):
         self.observers = []
         self.coordinates_list = []
+        self.global_chatlog = []
 
     def subscribe_agent(self, observer):
         self.observers.append(observer)
 
-    def send_all(self, coordinates):
+    def send_all_coords(self, coordinates):
         coordinates = [list(map(int, c.split(','))) for c in coordinates]
         self.coordinates_list.extend(coordinates)
         for observer in self.observers:
             observer.receive_public_msg(coordinates)
+
+    def send_all_msg(self, message):
+        self.global_chatlog.extend(message)
+        for observer in self.observers:
+            observer.receive_public_msg(message)
 
 class PrivateChannel:
     # [private] 'Subject' object
@@ -31,10 +43,14 @@ class PrivateChannel:
     def subscribe_agent(self, agent):
         self.observers[agent.label] = agent
 
-    def send_private_msg(self, sender, recipient, coordinates):
+    def send_private_coords(self, sender, recipient, coordinates):
         coordinates = [list(map(int, c.split(','))) for c in coordinates]
         if recipient in self.observers:
             self.observers[recipient].receive_private_msg(sender, coordinates)
+
+    def send_private_msg(self, sender, recipient, message):
+        if recipient in self.observers:
+            self.observers[recipient].receive_private_msg(sender, message)
 
 public_channel = PublicChannel()
 private_channel = PrivateChannel()
@@ -43,6 +59,7 @@ class Agent:
         self.label = label
         self.collected_targets = 0
         self.coordinates_list = []
+        self.chatlog = []
         public_channel.subscribe_agent(self)
         private_channel.subscribe_agent(self)
         self.power_level = 100
@@ -114,11 +131,11 @@ class Agent:
         else:
             return f"Agent {self.label}:\n{white_space}Position ({self.x}, {self.y})"
 
-    def send_public_msg(self, coordinates):
-        print(f"PUBLIC-MSG: Agent {self.label} is sending {coordinates}")
-        public_channel.send_all(coordinates)
+    def send_public_coords(self, coordinates):
+        print(f"PUBLIC-MSG: Agent {self.label} is sending coordinates {coordinates}")
+        public_channel.send_all_coords(coordinates)
 
-    def send_private_msg(self, recipient, coordinates):
+    def send_private_coords(self, recipient, coordinates):
         private_comms_enabled = MoralAI_Util.get_private_comms_state()
         if private_comms_enabled:
             print(f"PRIVATE-MSG: Agent {self.label} is sending {coordinates} to Agent {recipient}")
@@ -126,11 +143,11 @@ class Agent:
         else:
             print(f"BLOCKED: Agent {self.label} attempted to send on the private channel but because of game rules it was blocked.")
 
-    def receive_public_msg(self, coordinates):
+    def receive_public_coords(self, coordinates):
         self.coordinates_list.extend(coordinates)
         self.remove_duplicate_coordinates()
 
-    def receive_private_msg(self, sender, coordinates):
+    def receive_private_coords(self, sender, coordinates):
         private_comms_enabled = MoralAI_Util.get_private_comms_state()
         if private_comms_enabled:
             self.coordinates_list.extend(coordinates)
@@ -138,9 +155,34 @@ class Agent:
         else:
             print(f"BLOCKED: Agent {self.label} attempted to send on the private channel but because of game rules it was blocked.")
 
+    def send_public_msg(self, message):
+        print(f"PUBLIC-MSG: Agent {self.label} is sending message {message}")
+        public_channel.send_all_msg(message)
+
+    def send_private_msg(self, recipient, message):
+        private_comms_enabled = MoralAI_Util.get_private_comms_state()
+        if private_comms_enabled:
+            print(f"PRIVATE-MSG: Agent {self.label} is sending message {message} to Agent {recipient}")
+            private_channel.send_private_msg(self.label, recipient, message)
+        else:
+            print(f"BLOCKED: Agent {self.label} attempted to send on the private channel but because of game rules it was blocked.")
+
+    def receive_public_msg(self, message):
+        self.chatlog.append(message)
+
+    def receive_private_msg(self, sender, message):
+        private_comms_enabled = MoralAI_Util.get_private_comms_state()
+        if private_comms_enabled:
+            self.chatlog.append(message)
+        else:
+            print(f"BLOCKED: Agent {self.label} attempted to send on the private channel but because of game rules it was blocked.")
+
 
     def get_shared_coords(self):
         return f"{self.label}: {self.coordinates_list}"
+
+    def get_agent_chatlog(self):
+        return f"{self.label}: {self.chatlog}"
 
     def remove_duplicate_coordinates(self):
         coordinates_without_duplicates = []
