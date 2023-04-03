@@ -9,6 +9,6 @@ GAME_CONFIG = {
     'num_agents': None,
     'MAX_num_agents': None,
     'num_targets_per_agent': None,
-    'radar_reach': None,
+    'radar_reach_radius': None,
     'show_initial_positions': None
 }

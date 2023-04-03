@@ -175,6 +175,7 @@ def init_grid():
     return grid
 
 def return_target_num(string):
+    # THIS LIKELY NEEDS TO BE CORRECTED BECAUSE 'TB1' > '1' BUT SHOULD BE '2' 
     for char in string:
         num_str = ''.join(filter(str.isdigit, char))
         if num_str:
@@ -189,6 +190,15 @@ def grid_to_str():
             header += f"{i:20}"
         header += "\n"
         result += header
+
+    # replace target ID's with 1 char representations 'TA1'
+
+    # for row in grid:
+    #     for cell in row:
+    #         if type(cell) != int:
+    #             if cell is not '_':
+    #                 cell = return_target_num(cell)
+
     for i, row in enumerate(grid):
         row_str = ' '.join(row)
         row_num_str = str(i+1)
@@ -231,7 +241,7 @@ def populate_N_agents(N_agents):
         rnd_x, rnd_y = get_random_empty_cell(grid)
         new_agent = MoralAI_Agent.Agent(agent_dict[x], rnd_x, rnd_y)
         agents.append(new_agent)
-    return agents
+    return [ grid, agents ]
 
 def populate_agent_targets(agents, num_targets_per_agent, show_initial_positions):
     global grid

@@ -1,4 +1,4 @@
-import MoralAI_Util
+import math, MoralAI_Util
 from MoralAI_Config import GAME_CONFIG
 
 class Observer:
@@ -48,7 +48,7 @@ class Agent:
         self.power_level = 100
         self.x = x
         self.y = y
-        self.radar_reach = GAME_CONFIG['radar_reach']
+        self.radar_reach = GAME_CONFIG['radar_reach_radius']
         MoralAI_Util.set_cell(x, y, label)
         if GAME_CONFIG['verbose']:
             print(f"New agent: {label}, {x}, {y}")
@@ -149,10 +149,14 @@ class Agent:
                 coordinates_without_duplicates.append(coordinates)
         self.coordinates_list = coordinates_without_duplicates
 
-    def observation_matrix(self, grid, radius):
+    def observation_matrix(self, grid):
+        # global grid
+        # print(type(grid))
+
         # define the observable space around the agent, 
         # 'X' out of range, 'A' is agent at centre, '0' is reachable cell in radius 
-        center = radius  
+        radius = self.radar_reach
+        center = radius
         matrix = [[0.0 for x in range(2*radius+1)] for y in range(2*radius+1)]
 
         for i in range(2*radius+1):
@@ -171,7 +175,7 @@ class Agent:
 
         center_row = len(matrix) // 2
         center_col = len(matrix[0]) // 2
-        matrix[self.y][self.x] = 'A'
+        matrix[center_row][center_col] = 'A'
 
         # translate the observable space into relative 
         # coordinates based off agent position
